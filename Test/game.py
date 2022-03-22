@@ -89,6 +89,10 @@ class Game:
         """
         data = str(self.net.id) + ":" + str(self.player.x) + "," + str(self.player.y)
         reply = self.net.send(data)
+
+        if ('gameover' in reply):
+            pygame.quit()
+
         return reply
 
     @staticmethod
