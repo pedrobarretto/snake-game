@@ -1,6 +1,9 @@
 import socket
 from _thread import *
 import sys
+import json
+from signal import signal, SIGPIPE, SIG_DFL  
+signal(SIGPIPE,SIG_DFL) 
 
 def parsePos(data):
     try:
@@ -36,38 +39,69 @@ s.listen(2)
 print("Waiting for a connection")
 
 currentId = "0"
-pos = ["0:50,50", "1:150,150"]
+# pos = ["0:50,50", "1:150,150"]
+model = {
+    'id': currentId,
+    'snake_body': [[100, 50],
+			[90, 50],
+			[80, 50],
+			[70, 50]
+			],
+    'snake_body2': [[100, 50],
+			[90, 50],
+			[80, 50],
+			[70, 50]
+			],
+    'snake_position': [100, 50],
+    'snake_position2': [100, 50],
+    'fruit_position': [10, 10],
+    'score': 0,
+    'score2': 0
+}
 def threaded_client(conn):
-    global currentId, pos
+    global currentId, snake_pos
     conn.send(str.encode(currentId))
     currentId = "1"
-    reply = ''
+    reply = {}
     while True:
         try:
-            data = conn.recv(2048)
-            reply = data.decode('utf-8')
+            data = json.loads(conn.recv(2048))
+            # reply = data.decode('utf-8')
             if not data:
                 conn.send(str.encode("Goodbye"))
                 break
             else:
-                print("Recieved: " + reply)
-                arr = reply.split(":")
-                id = int(arr[0])
-                pos[id] = reply
+                print("Recieved: " + data)
+                # arr = reply.split(":")
+                # id = int(arr[0])
+                # pos[id] = reply
+                id = data.id
                 
                 if id == 0: nid = 1
                 if id == 1: nid = 0
 
-                coords1 = parsePos(pos[0])
-                coords2 = parsePos(pos[1])
+                if data.id == 0:
+                    model.snake_position2 = data.snake_position2
+                    model.snake_body2 = data.snake_body2
+                    model.score2 = data.score2
+                else:
+                    model.snake_position = data.snake_position
+                    model.snake_body = data.snake_body
+                    model.score = data.score
 
-                reply = pos[nid][:]
-                print("Sending: " + reply)
+                # coords1 = parsePos(pos[0])
+                # coords2 = parsePos(pos[1])
+
+                # reply = pos[nid][:]
+                # era data
+                print("Sending: " + model)
 
                 if (colides(coords1, coords2)):
                     conn.sendall(str.encode('gameover'))
 
-            conn.sendall(str.encode(reply))
+            # conn.sendall(str.encode(reply))
+            # era data
+            conn.sendall(model)
         except:
             break
 

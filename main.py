@@ -153,7 +153,7 @@ while True:
 	game_window.fill(black)
 	
 	for pos in snake_body:
-		pygame.draw.rect(game_window, green,
+		pygame.draw.rect(game_window, blue,
 						pygame.Rect(pos[0], pos[1], 10, 10))
 	pygame.draw.rect(game_window, white, pygame.Rect(
 		fruit_position[0], fruit_position[1], 10, 10))

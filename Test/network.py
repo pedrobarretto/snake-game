@@ -1,5 +1,5 @@
 import socket
-
+import json
 
 class Network:
 
@@ -22,8 +22,10 @@ class Network:
         :return: str
         """
         try:
-            self.client.send(str.encode(data))
+            print('network data: ', data)
+            self.client.send(str.encode(json.dumps(data)))
             reply = self.client.recv(2048).decode()
+            print('network reply: ', reply)
             return reply
         except socket.error as e:
             return str(e)
