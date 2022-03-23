@@ -1,7 +1,7 @@
 import socket
 from _thread import *
 import sys
-import json
+import pickle
 from signal import signal, SIGPIPE, SIG_DFL  
 signal(SIGPIPE,SIG_DFL) 
 
@@ -60,12 +60,14 @@ model = {
 }
 def threaded_client(conn):
     global currentId, snake_pos
-    conn.send(str.encode(currentId))
+    # conn.send(str.encode(currentId))
+    conn.sendall(pickle.dumps(model))
     currentId = "1"
     reply = {}
     while True:
         try:
-            data = json.loads(conn.recv(2048))
+            data = pickle.loads(conn.recv(1000000000000))
+            print('server data: ', data)
             # reply = data.decode('utf-8')
             if not data:
                 conn.send(str.encode("Goodbye"))
@@ -94,14 +96,14 @@ def threaded_client(conn):
 
                 # reply = pos[nid][:]
                 # era data
-                print("Sending: " + model)
+                print("Sending: " + data)
 
                 if (colides(coords1, coords2)):
                     conn.sendall(str.encode('gameover'))
 
             # conn.sendall(str.encode(reply))
             # era data
-            conn.sendall(model)
+            conn.sendall(pickle.dumps(data))
         except:
             break
 

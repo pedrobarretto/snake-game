@@ -2,6 +2,7 @@ import pygame
 from network import Network
 import time
 import random
+import json
 # print(pygame.font.get_fonts())
 
 pygame.init()
@@ -112,6 +113,7 @@ class Game:
 
         while run:
             clock.tick(self.speed)
+            print('joguinho startou :D')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -180,7 +182,6 @@ class Game:
 
             self.show_score(1, self.white, 'notosans', 20)
 
-            # self.player2.x, self.player2.y = self.parse_data(self.send_data())
             self.snake_body, self.snake_body2, self.snake_position, self.snake_position2, self.fruit_position, self.score, self.score2 = self.parse_data(self.send_data())
 
             # self.canvas.draw_background()
@@ -232,7 +233,7 @@ class Game:
                 data.score2
             ]
             print('retornando res: ', res)
-            return res or data
+            return res
         except:
             print('retorno de array vazio')
             return [
